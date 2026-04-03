@@ -2,11 +2,10 @@ import React, { useMemo, useState } from 'react';
 import './AlertPanel.css';
 
 const INITIAL_VISIBLE = 4;
-const LOAD_STEP = 4;
 
 const AlertPanel = ({ alerts, onAcknowledge, onResolve }) => {
   const alertsArray = Array.isArray(alerts) ? alerts : [];
-  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
+  const [showHidden, setShowHidden] = useState(false);
 
   const severityOrder = { CRITICAL: 0, WARNING: 1, INFO: 2 };
 
@@ -18,27 +17,18 @@ const AlertPanel = ({ alerts, onAcknowledge, onResolve }) => {
     });
   }, [alertsArray]);
 
-  const visibleAlerts = sortedAlerts.slice(0, visibleCount);
-  const hiddenCount = Math.max(0, sortedAlerts.length - visibleAlerts.length);
+  const visibleAlerts = sortedAlerts.slice(0, INITIAL_VISIBLE);
+  const hiddenAlerts = sortedAlerts.slice(INITIAL_VISIBLE);
+  const hiddenCount = hiddenAlerts.length;
 
-  const groupedAlerts = {
-    CRITICAL: visibleAlerts.filter((a) => a.severity === 'CRITICAL'),
-    WARNING: visibleAlerts.filter((a) => a.severity === 'WARNING'),
-    INFO: visibleAlerts.filter((a) => a.severity === 'INFO'),
-  };
+  const groupBySeverity = (items) => ({
+    CRITICAL: items.filter((a) => a.severity === 'CRITICAL'),
+    WARNING: items.filter((a) => a.severity === 'WARNING'),
+    INFO: items.filter((a) => a.severity === 'INFO'),
+  });
 
-  const handleScroll = (e) => {
-    if (hiddenCount === 0) return;
-    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
-    const nearBottom = scrollHeight - scrollTop - clientHeight < 48;
-    if (nearBottom) {
-      setVisibleCount((prev) => Math.min(prev + LOAD_STEP, sortedAlerts.length));
-    }
-  };
-
-  const handleShowMore = () => {
-    setVisibleCount((prev) => Math.min(prev + LOAD_STEP, sortedAlerts.length));
-  };
+  const groupedVisibleAlerts = groupBySeverity(visibleAlerts);
+  const groupedHiddenAlerts = groupBySeverity(hiddenAlerts);
 
   if (alertsArray.length === 0) {
     return (
@@ -52,37 +42,61 @@ const AlertPanel = ({ alerts, onAcknowledge, onResolve }) => {
   return (
     <div className="alert-panel">
       <h3>Active Alerts ({alertsArray.length})</h3>
-      <p className="alert-panel-hint">Showing latest high-priority 4 alerts first. Scroll to load more.</p>
+      <p className="alert-panel-hint">Showing latest 4 alerts. Remaining alerts are in a hidden section.</p>
 
-      <div className="alerts-scroll-zone" onScroll={handleScroll}>
-        {groupedAlerts.CRITICAL.length > 0 && (
+      <div className="alerts-scroll-zone">
+        {groupedVisibleAlerts.CRITICAL.length > 0 && (
           <div className="alert-group">
-            <h4 className="group-title critical">Critical ({groupedAlerts.CRITICAL.length})</h4>
-            {groupedAlerts.CRITICAL.map((alert) => renderAlert(alert, onAcknowledge, onResolve))}
+            <h4 className="group-title critical">Critical ({groupedVisibleAlerts.CRITICAL.length})</h4>
+            {groupedVisibleAlerts.CRITICAL.map((alert) => renderAlert(alert, onAcknowledge, onResolve))}
           </div>
         )}
 
-        {groupedAlerts.WARNING.length > 0 && (
+        {groupedVisibleAlerts.WARNING.length > 0 && (
           <div className="alert-group">
-            <h4 className="group-title warning">Warning ({groupedAlerts.WARNING.length})</h4>
-            {groupedAlerts.WARNING.map((alert) => renderAlert(alert, onAcknowledge, onResolve))}
+            <h4 className="group-title warning">Warning ({groupedVisibleAlerts.WARNING.length})</h4>
+            {groupedVisibleAlerts.WARNING.map((alert) => renderAlert(alert, onAcknowledge, onResolve))}
           </div>
         )}
 
-        {groupedAlerts.INFO.length > 0 && (
+        {groupedVisibleAlerts.INFO.length > 0 && (
           <div className="alert-group">
-            <h4 className="group-title info">Information ({groupedAlerts.INFO.length})</h4>
-            {groupedAlerts.INFO.map((alert) => renderAlert(alert, onAcknowledge, onResolve))}
+            <h4 className="group-title info">Information ({groupedVisibleAlerts.INFO.length})</h4>
+            {groupedVisibleAlerts.INFO.map((alert) => renderAlert(alert, onAcknowledge, onResolve))}
           </div>
         )}
       </div>
 
       {hiddenCount > 0 && (
-        <div className="alerts-more-row">
-          <span>{hiddenCount} more alerts hidden</span>
-          <button className="show-more-btn" onClick={handleShowMore}>
-            Show 4 More
+        <div className="hidden-alerts-section">
+          <button className="show-more-btn" onClick={() => setShowHidden((prev) => !prev)}>
+            {showHidden ? 'Hide' : 'Show'} Hidden Alerts ({hiddenCount})
           </button>
+
+          {showHidden && (
+            <div className="hidden-alerts-content">
+              {groupedHiddenAlerts.CRITICAL.length > 0 && (
+                <div className="alert-group">
+                  <h4 className="group-title critical">Critical ({groupedHiddenAlerts.CRITICAL.length})</h4>
+                  {groupedHiddenAlerts.CRITICAL.map((alert) => renderAlert(alert, onAcknowledge, onResolve))}
+                </div>
+              )}
+
+              {groupedHiddenAlerts.WARNING.length > 0 && (
+                <div className="alert-group">
+                  <h4 className="group-title warning">Warning ({groupedHiddenAlerts.WARNING.length})</h4>
+                  {groupedHiddenAlerts.WARNING.map((alert) => renderAlert(alert, onAcknowledge, onResolve))}
+                </div>
+              )}
+
+              {groupedHiddenAlerts.INFO.length > 0 && (
+                <div className="alert-group">
+                  <h4 className="group-title info">Information ({groupedHiddenAlerts.INFO.length})</h4>
+                  {groupedHiddenAlerts.INFO.map((alert) => renderAlert(alert, onAcknowledge, onResolve))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -137,3 +151,5 @@ const renderAlert = (alert, onAcknowledge, onResolve) => {
 };
 
 export default AlertPanel;
+
+

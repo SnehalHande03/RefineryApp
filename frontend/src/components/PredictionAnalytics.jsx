@@ -10,12 +10,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar
+  ResponsiveContainer
 } from 'recharts';
 import { getSensorReadings } from '../services/api';
 import './PredictionAnalytics.css';
@@ -41,30 +36,21 @@ const PredictionAnalytics = ({ machineId }) => {
       const data = await getSensorReadings(machineId);
       const readings = data.results || data || [];
 
-      // Calculate statistics
       const total = readings.length;
-      const normal = readings.filter(r => !r.failure_predicted).length;
-      const failure = readings.filter(r => r.failure_predicted).length;
+      const normal = readings.filter((r) => !r.failure_predicted).length;
+      const failure = readings.filter((r) => r.failure_predicted).length;
       const avgConf = readings.reduce((sum, r) => sum + (r.failure_confidence || 0), 0) / (total || 1);
 
-      // Group predictions by hour
       const predictionsByTime = {};
-      readings.forEach(reading => {
-        const time = new Date(reading.timestamp).toLocaleTimeString([], { 
-          hour: '2-digit', 
-          minute: '2-digit' 
-        });
+      readings.forEach((reading) => {
+        const time = new Date(reading.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         if (!predictionsByTime[time]) {
           predictionsByTime[time] = { time, normal: 0, failure: 0 };
         }
-        if (reading.failure_predicted) {
-          predictionsByTime[time].failure += 1;
-        } else {
-          predictionsByTime[time].normal += 1;
-        }
+        if (reading.failure_predicted) predictionsByTime[time].failure += 1;
+        else predictionsByTime[time].normal += 1;
       });
 
-      // Confidence distribution buckets
       const confidenceRanges = {
         '0-20%': 0,
         '20-40%': 0,
@@ -73,7 +59,7 @@ const PredictionAnalytics = ({ machineId }) => {
         '80-100%': 0
       };
 
-      readings.forEach(reading => {
+      readings.forEach((reading) => {
         const conf = (reading.failure_confidence || 0) * 100;
         if (conf <= 20) confidenceRanges['0-20%']++;
         else if (conf <= 40) confidenceRanges['20-40%']++;
@@ -87,7 +73,7 @@ const PredictionAnalytics = ({ machineId }) => {
         normalCount: normal,
         failureCount: failure,
         avgConfidence: avgConf,
-        predictionsByTime: Object.values(predictionsByTime).slice(-15), // Last 15 time points
+        predictionsByTime: Object.values(predictionsByTime).slice(-15),
         confidenceDistribution: Object.entries(confidenceRanges).map(([range, count]) => ({
           name: range,
           count,
@@ -115,17 +101,13 @@ const PredictionAnalytics = ({ machineId }) => {
 
   const totalPredictions = predictionStats.totalPredictions || 0;
   const hasPredictionData = totalPredictions > 0;
-  const normalPercentage = hasPredictionData
-    ? ((predictionStats.normalCount / totalPredictions) * 100).toFixed(1)
-    : '0.0';
-  const failurePercentage = hasPredictionData
-    ? ((predictionStats.failureCount / totalPredictions) * 100).toFixed(1)
-    : '0.0';
+  const normalPercentage = hasPredictionData ? ((predictionStats.normalCount / totalPredictions) * 100).toFixed(1) : '0.0';
+  const failurePercentage = hasPredictionData ? ((predictionStats.failureCount / totalPredictions) * 100).toFixed(1) : '0.0';
 
   if (!hasPredictionData) {
     return (
       <div className="prediction-analytics-container">
-        <h3>📈 Prediction Analytics</h3>
+        <h3>Prediction Analytics</h3>
         <p>No prediction data available for this machine yet. Submit sensor readings to generate analytics.</p>
       </div>
     );
@@ -133,12 +115,11 @@ const PredictionAnalytics = ({ machineId }) => {
 
   return (
     <div className="prediction-analytics-container">
-      <h3>📈 Prediction Analytics</h3>
+      <h3>Prediction Analytics</h3>
 
-      {/* Top KPIs */}
       <div className="kpi-grid">
         <div className="kpi-card normal">
-          <div className="kpi-icon">✓</div>
+          <div className="kpi-icon">OK</div>
           <div className="kpi-content">
             <span className="kpi-label">Normal Status</span>
             <span className="kpi-value">{predictionStats.normalCount}</span>
@@ -147,7 +128,7 @@ const PredictionAnalytics = ({ machineId }) => {
         </div>
 
         <div className="kpi-card failure">
-          <div className="kpi-icon">⚠️</div>
+          <div className="kpi-icon">AL</div>
           <div className="kpi-content">
             <span className="kpi-label">Failure Risk</span>
             <span className="kpi-value">{predictionStats.failureCount}</span>
@@ -156,7 +137,7 @@ const PredictionAnalytics = ({ machineId }) => {
         </div>
 
         <div className="kpi-card confidence">
-          <div className="kpi-icon">📊</div>
+          <div className="kpi-icon">CF</div>
           <div className="kpi-content">
             <span className="kpi-label">Avg Confidence</span>
             <span className="kpi-value">{(predictionStats.avgConfidence * 100).toFixed(1)}%</span>
@@ -165,7 +146,7 @@ const PredictionAnalytics = ({ machineId }) => {
         </div>
 
         <div className="kpi-card total">
-          <div className="kpi-icon">📈</div>
+          <div className="kpi-icon">TP</div>
           <div className="kpi-content">
             <span className="kpi-label">Total Predictions</span>
             <span className="kpi-value">{predictionStats.totalPredictions}</span>
@@ -174,9 +155,7 @@ const PredictionAnalytics = ({ machineId }) => {
         </div>
       </div>
 
-      {/* Charts */}
       <div className="analytics-charts">
-        {/* Pie Chart - Prediction Distribution */}
         <div className="chart-wrapper">
           <h4>Prediction Distribution</h4>
           <ResponsiveContainer width="100%" height={300}>
@@ -191,7 +170,6 @@ const PredictionAnalytics = ({ machineId }) => {
                 labelLine={false}
                 label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
                 outerRadius={100}
-                fill="#8884d8"
                 dataKey="value"
               >
                 <Cell fill="#28a745" />
@@ -202,7 +180,6 @@ const PredictionAnalytics = ({ machineId }) => {
           </ResponsiveContainer>
         </div>
 
-        {/* Bar Chart - Predictions by Time */}
         <div className="chart-wrapper">
           <h4>Predictions Timeline</h4>
           <ResponsiveContainer width="100%" height={300}>
@@ -218,7 +195,6 @@ const PredictionAnalytics = ({ machineId }) => {
           </ResponsiveContainer>
         </div>
 
-        {/* Confidence Distribution */}
         <div className="chart-wrapper full-width">
           <h4>Confidence Level Distribution</h4>
           <ResponsiveContainer width="100%" height={300}>
@@ -227,13 +203,12 @@ const PredictionAnalytics = ({ machineId }) => {
               <XAxis dataKey="name" />
               <YAxis label={{ value: 'Number of Predictions', angle: -90, position: 'insideLeft' }} />
               <Tooltip formatter={(value) => `${value} predictions`} />
-              <Bar dataKey="count" fill="#667eea" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="count" fill="#9b6f3f" radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      {/* Confidence Level Table */}
       <div className="confidence-table">
         <h4>Confidence Breakdown</h4>
         <table>
@@ -253,10 +228,7 @@ const PredictionAnalytics = ({ machineId }) => {
                 <td className="percentage">{item.percentage}%</td>
                 <td className="visual">
                   <div className="progress-bar">
-                    <div 
-                      className="progress-fill" 
-                      style={{ width: `${item.percentage}%` }}
-                    ></div>
+                    <div className="progress-fill" style={{ width: `${item.percentage}%` }}></div>
                   </div>
                 </td>
               </tr>
@@ -269,3 +241,6 @@ const PredictionAnalytics = ({ machineId }) => {
 };
 
 export default PredictionAnalytics;
+
+
+

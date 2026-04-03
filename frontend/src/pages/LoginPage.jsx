@@ -13,7 +13,6 @@ const LoginPage = ({ onLogin, onBackClick }) => {
     e.preventDefault();
     setError('');
 
-    // Validation
     if (!email || !password) {
       setError('Please enter email and password');
       return;
@@ -37,10 +36,8 @@ const LoginPage = ({ onLogin, onBackClick }) => {
 
     setLoading(true);
 
-    // Simulate login/signup (in real app, call API)
     setTimeout(() => {
       if (email && password.length >= 6) {
-        // Store user info in localStorage
         const user = {
           id: 1,
           name: email.split('@')[0],
@@ -49,7 +46,7 @@ const LoginPage = ({ onLogin, onBackClick }) => {
         };
         localStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('isAuthenticated', 'true');
-        
+
         onLogin(user);
       } else {
         setError('Invalid credentials. Try any email and password (min 6 chars)');
@@ -63,9 +60,9 @@ const LoginPage = ({ onLogin, onBackClick }) => {
       <div className="login-card">
         <div className="login-header">
           <button className="back-button" onClick={onBackClick}>
-            ← Back
+            Back
           </button>
-          <h1>{isSignUp ? 'Join the Future' : 'Intelligence Secured'}</h1>
+          <h1>{isSignUp ? 'Create Your Account' : 'Secure Sign In'}</h1>
           <p>{isSignUp ? 'Sign up for FlowGuard AI monitoring' : 'Sign in to your FlowGuard AI dashboard'}</p>
         </div>
 
@@ -113,11 +110,7 @@ const LoginPage = ({ onLogin, onBackClick }) => {
 
           {error && <div className="error-message">{error}</div>}
 
-          <button
-            type="submit"
-            className="login-button"
-            disabled={loading}
-          >
+          <button type="submit" className="login-button" disabled={loading}>
             {loading ? (isSignUp ? 'Creating account...' : 'Signing in...') : (isSignUp ? 'Sign Up' : 'Sign In')}
           </button>
         </form>
@@ -143,16 +136,43 @@ const LoginPage = ({ onLogin, onBackClick }) => {
 
       <div className="login-visual">
         <div className="visual-element">
-          <h2>🏭</h2>
-          <p>Industrial IoT Monitoring</p>
+          <div className="visual-head">
+            <h2>01</h2>
+            <p>Industrial IoT Monitoring</p>
+          </div>
+          <div className="visual-art monitoring-art">
+            <span className="bar b1"></span>
+            <span className="bar b2"></span>
+            <span className="bar b3"></span>
+            <span className="bar b4"></span>
+            <span className="bar b5"></span>
+          </div>
         </div>
+
         <div className="visual-element">
-          <h2>🔒</h2>
-          <p>Secure Access</p>
+          <div className="visual-head">
+            <h2>02</h2>
+            <p>Secure Access</p>
+          </div>
+          <div className="visual-art security-art">
+            <div className="shield">
+              <div className="lock"></div>
+            </div>
+          </div>
         </div>
+
         <div className="visual-element">
-          <h2>📊</h2>
-          <p>Real-time Analytics</p>
+          <div className="visual-head">
+            <h2>03</h2>
+            <p>Real-Time Analytics</p>
+          </div>
+          <div className="visual-art analytics-art">
+            <div className="line-path"></div>
+            <span className="dot d1"></span>
+            <span className="dot d2"></span>
+            <span className="dot d3"></span>
+            <span className="dot d4"></span>
+          </div>
         </div>
       </div>
     </div>
@@ -160,3 +180,5 @@ const LoginPage = ({ onLogin, onBackClick }) => {
 };
 
 export default LoginPage;
+
+

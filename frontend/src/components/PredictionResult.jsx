@@ -34,9 +34,7 @@ const PredictionResult = ({ result }) => {
     <div className="prediction-result-container">
       <div className={`prediction-card ${isFailurePredicted ? 'failure' : 'normal'}`}>
         <div className="prediction-status">
-          <span className="status-icon">
-            {isFailurePredicted ? '⚠️' : '✓'}
-          </span>
+          <span className="status-icon">{isFailurePredicted ? 'AL' : 'OK'}</span>
           <div className="status-text">
             <h3>{isFailurePredicted ? 'FAILURE RISK DETECTED' : 'NORMAL OPERATION'}</h3>
             <p>Confidence: {confidence}%</p>
@@ -54,11 +52,7 @@ const PredictionResult = ({ result }) => {
           </div>
         </div>
 
-        <button
-          className={`explain-btn ${loading ? 'loading' : ''}`}
-          onClick={handleShowExplanation}
-          disabled={loading}
-        >
+        <button className={`explain-btn ${loading ? 'loading' : ''}`} onClick={handleShowExplanation} disabled={loading}>
           {loading ? 'Loading...' : showExplanation ? 'Hide Explanation' : 'Why? (Show Explanation)'}
         </button>
       </div>
@@ -72,9 +66,7 @@ const PredictionResult = ({ result }) => {
             {explanation.top_sensors.map((sensor, idx) => (
               <div key={idx} className={`sensor-item ${sensor.status}`}>
                 <div className="sensor-header">
-                  <span className="sensor-name">
-                    {idx + 1}. {sensor.sensor.charAt(0).toUpperCase() + sensor.sensor.slice(1)}
-                  </span>
+                  <span className="sensor-name">{idx + 1}. {sensor.sensor.charAt(0).toUpperCase() + sensor.sensor.slice(1)}</span>
                   <span className="sensor-status">{sensor.status.toUpperCase()}</span>
                 </div>
                 <div className="sensor-details">
@@ -82,7 +74,7 @@ const PredictionResult = ({ result }) => {
                   <span>Importance: {(sensor.importance * 100).toFixed(1)}%</span>
                 </div>
                 <div className="importance-bar">
-                  <div className="importance-fill" style={{width: `${sensor.importance * 100}%`}}></div>
+                  <div className="importance-fill" style={{ width: `${sensor.importance * 100}%` }}></div>
                 </div>
               </div>
             ))}
@@ -105,7 +97,7 @@ const PredictionResult = ({ result }) => {
 
       {result.alerts && result.alerts.length > 0 && (
         <div className="alerts-section">
-          <h4>⚠️ Triggered Alerts ({result.alerts.length})</h4>
+          <h4>Triggered Alerts ({result.alerts.length})</h4>
           {result.alerts.map((alert, idx) => (
             <div key={idx} className={`alert-item ${alert.severity.toLowerCase()}`}>
               <span className="alert-severity">{alert.severity}</span>
@@ -117,7 +109,7 @@ const PredictionResult = ({ result }) => {
 
       {result.recommendations && Array.isArray(result.recommendations) && result.recommendations.length > 0 && (
         <div className="recommendations-section">
-          <h4>💡 Maintenance Recommendations:</h4>
+          <h4>Maintenance Recommendations:</h4>
           <ul>
             {result.recommendations.map((rec, idx) => (
               <li key={idx}>{rec}</li>
@@ -130,3 +122,5 @@ const PredictionResult = ({ result }) => {
 };
 
 export default PredictionResult;
+
+

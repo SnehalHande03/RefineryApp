@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
-
+OPENAI_API_KEY = os.getenv("AIzaSyBRT4fMKkQ4ihFfx6Bzi1g1ZXR0y6x_kdU")
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-your-secret-key-change-in-production-18hf9*$8j@#k%^&*()'

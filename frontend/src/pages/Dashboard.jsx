@@ -19,11 +19,10 @@ function Dashboard({ user, onLogout }) {
   const [selectedMachine, setSelectedMachine] = useState(null);
   const [report, setReport] = useState(null);
   const [loadingReport, setLoadingReport] = useState(false);
-  const [tab, setTab] = useState('monitor'); // 'monitor', 'analytics', 'alerts', 'trends', 'report'
-  const [reportDetail, setReportDetail] = useState(null); // For detailed report view
+  const [tab, setTab] = useState('monitor');
+  const [reportDetail, setReportDetail] = useState(null);
   const [selectedMachineForGraphs, setSelectedMachineForGraphs] = useState(null);
 
-  // Load machines on mount
   useEffect(() => {
     loadMachines();
     loadAlerts();
@@ -32,7 +31,6 @@ function Dashboard({ user, onLogout }) {
   const loadMachines = async () => {
     try {
       const data = await getMachines();
-      // API returns paginated response with 'results' key
       const machinesList = data.results || (Array.isArray(data) ? data : []);
       setMachines(machinesList);
     } catch (error) {
@@ -90,7 +88,7 @@ function Dashboard({ user, onLogout }) {
     try {
       const reportData = await generateReport(selectedMachine.machine_id);
       setReport(reportData);
-      setReportDetail(reportData); // Show detailed report page
+      setReportDetail(reportData);
       setTab('reportDetail');
     } catch (error) {
       console.error('Error generating report:', error);
@@ -105,66 +103,46 @@ function Dashboard({ user, onLogout }) {
     setTab('report');
   };
 
-  // If prediction detail is shown, display it
   if (predictionDetail) {
     return <PredictionDetail prediction={predictionDetail} onBack={handleBackFromPrediction} />;
   }
 
-  // If detailed report is shown, display it
   if (reportDetail) {
     return <ReportDetail report={reportDetail} onBack={handleBackFromReport} />;
   }
 
   return (
     <div className="dashboard-container">
-      {/* Navigation Tabs */}
       <nav className="dashboard-nav">
-        <button
-          className={`nav-tab ${tab === 'monitor' ? 'active' : ''}`}
-          onClick={() => setTab('monitor')}
-        >
-          📊 Monitor
+        <button className={`nav-tab ${tab === 'monitor' ? 'active' : ''}`} onClick={() => setTab('monitor')}>
+          Monitor
         </button>
-        <button
-          className={`nav-tab ${tab === 'analytics' ? 'active' : ''}`}
-          onClick={() => setTab('analytics')}
-        >
-          📈 Analytics
+        <button className={`nav-tab ${tab === 'analytics' ? 'active' : ''}`} onClick={() => setTab('analytics')}>
+          Analytics
         </button>
-        <button
-          className={`nav-tab ${tab === 'alerts' ? 'active' : ''}`}
-          onClick={() => setTab('alerts')}
-        >
-          🚨 Alerts {Array.isArray(alerts) && alerts.length > 0 && <span className="badge">{alerts.length}</span>}
+        <button className={`nav-tab ${tab === 'alerts' ? 'active' : ''}`} onClick={() => setTab('alerts')}>
+          Alerts {Array.isArray(alerts) && alerts.length > 0 && <span className="badge">{alerts.length}</span>}
         </button>
-        <button
-          className={`nav-tab ${tab === 'trends' ? 'active' : ''}`}
-          onClick={() => setTab('trends')}
-        >
-          📉 Trends
+        <button className={`nav-tab ${tab === 'trends' ? 'active' : ''}`} onClick={() => setTab('trends')}>
+          Trends
         </button>
-        <button
-          className={`nav-tab ${tab === 'report' ? 'active' : ''}`}
-          onClick={() => setTab('report')}
-        >
-          📋 Reports
+        <button className={`nav-tab ${tab === 'report' ? 'active' : ''}`} onClick={() => setTab('report')}>
+          Reports
         </button>
       </nav>
 
-      {/* Content Area */}
       <main className="dashboard-content">
-        {/* Monitor Tab */}
         {tab === 'monitor' && (
           <div className="tab-content">
             <div className="monitor-section">
               <div className="sensor-section">
-                <h2>📝 Submit Sensor Reading</h2>
+                <h2>Submit Sensor Reading</h2>
                 <SensorForm onSubmit={handleSensorSubmit} />
               </div>
 
               {predictionResult && (
                 <div className="result-section">
-                  <h2>🔮 Prediction Result</h2>
+                  <h2>Prediction Result</h2>
                   <PredictionResult result={predictionResult} />
                 </div>
               )}
@@ -172,7 +150,6 @@ function Dashboard({ user, onLogout }) {
           </div>
         )}
 
-        {/* Analytics Tab */}
         {tab === 'analytics' && (
           <div className="tab-content">
             <div className="analytics-section">
@@ -181,20 +158,22 @@ function Dashboard({ user, onLogout }) {
                 <select
                   value={selectedMachineForGraphs?.id || ''}
                   onChange={(e) => {
-                    const machine = machines.find(m => m.id === parseInt(e.target.value));
+                    const machine = machines.find((m) => m.id === parseInt(e.target.value));
                     setSelectedMachineForGraphs(machine);
                   }}
                 >
                   <option value="">-- Choose a machine --</option>
-                  {Array.isArray(machines) && machines.map(machine => (
-                    <option key={machine.id} value={machine.id}>
-                      {machine.machine_id}{machine.name ? ` - ${machine.name}` : ''}
-                    </option>
-                  ))}
+                  {Array.isArray(machines) &&
+                    machines.map((machine) => (
+                      <option key={machine.id} value={machine.id}>
+                        {machine.machine_id}{machine.name ? ` - ${machine.name}` : ''}
+                      </option>
+                    ))}
                 </select>
                 {selectedMachineForGraphs && (
                   <p className="selected-machine-note">
-                    Selected: {selectedMachineForGraphs.machine_id}{selectedMachineForGraphs.name ? ` - ${selectedMachineForGraphs.name}` : ''}
+                    Selected: {selectedMachineForGraphs.machine_id}
+                    {selectedMachineForGraphs.name ? ` - ${selectedMachineForGraphs.name}` : ''}
                   </p>
                 )}
               </div>
@@ -209,59 +188,50 @@ function Dashboard({ user, onLogout }) {
           </div>
         )}
 
-        {/* Alerts Tab */}
         {tab === 'alerts' && (
           <div className="tab-content">
-            <AlertPanel
-              alerts={alerts}
-              onAcknowledge={handleAcknowledgeAlert}
-              onResolve={handleResolveAlert}
-            />
+            <AlertPanel alerts={alerts} onAcknowledge={handleAcknowledgeAlert} onResolve={handleResolveAlert} />
           </div>
         )}
 
-        {/* Trends Tab */}
         {tab === 'trends' && (
           <div className="tab-content">
             <AlertTrends />
           </div>
         )}
 
-        {/* Reports Tab */}
         {tab === 'report' && (
           <div className="tab-content">
             <div className="report-section">
-              <h2>📋 Generate Maintenance Report</h2>
-              
+              <h2>Generate Maintenance Report</h2>
+
               <div className="machine-selector">
                 <label>Select Machine:</label>
                 <select
                   value={selectedMachine?.id || ''}
                   onChange={(e) => {
-                    const machine = machines.find(m => m.id === parseInt(e.target.value));
+                    const machine = machines.find((m) => m.id === parseInt(e.target.value));
                     setSelectedMachine(machine);
                   }}
                 >
                   <option value="">-- Choose a machine --</option>
-                  {Array.isArray(machines) && machines.map(machine => (
-                    <option key={machine.id} value={machine.id}>
-                      {machine.machine_id}{machine.name ? ` - ${machine.name}` : ''}
-                    </option>
-                  ))}
+                  {Array.isArray(machines) &&
+                    machines.map((machine) => (
+                      <option key={machine.id} value={machine.id}>
+                        {machine.machine_id}{machine.name ? ` - ${machine.name}` : ''}
+                      </option>
+                    ))}
                 </select>
                 {selectedMachine && (
                   <p className="selected-machine-note">
-                    Selected: {selectedMachine.machine_id}{selectedMachine.name ? ` - ${selectedMachine.name}` : ''}
+                    Selected: {selectedMachine.machine_id}
+                    {selectedMachine.name ? ` - ${selectedMachine.name}` : ''}
                   </p>
                 )}
               </div>
 
-              <button
-                className="generate-button"
-                onClick={handleGenerateReport}
-                disabled={!selectedMachine || loadingReport}
-              >
-                {loadingReport ? '⏳ Generating...' : '📊 Generate Report'}
+              <button className="generate-button" onClick={handleGenerateReport} disabled={!selectedMachine || loadingReport}>
+                {loadingReport ? 'Generating...' : 'Generate Report'}
               </button>
 
               {report && (
@@ -275,7 +245,7 @@ function Dashboard({ user, onLogout }) {
                       setTab('reportDetail');
                     }}
                   >
-                    View Full Report →
+                    View Full Report ->
                   </button>
                 </div>
               )}
@@ -284,7 +254,6 @@ function Dashboard({ user, onLogout }) {
         )}
       </main>
 
-      {/* Footer */}
       <footer className="dashboard-footer">
         <p>FlowGuard AI Predictive Maintenance v1.0 | Industrial Intelligence</p>
       </footer>
@@ -293,3 +262,5 @@ function Dashboard({ user, onLogout }) {
 }
 
 export default Dashboard;
+
+

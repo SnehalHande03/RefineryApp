@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  LineChart,
-  Line,
   BarChart,
   Bar,
   XAxis,
@@ -12,7 +10,7 @@ import {
   ResponsiveContainer,
   ComposedChart,
   Area,
-  AreaChart
+  Line
 } from 'recharts';
 import { getAlerts } from '../services/api';
 import './AlertTrends.css';
@@ -32,7 +30,6 @@ const AlertTrends = () => {
 
   useEffect(() => {
     loadAlertData();
-    // Refresh every 30 seconds
     const interval = setInterval(loadAlertData, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -40,46 +37,37 @@ const AlertTrends = () => {
   const loadAlertData = async () => {
     try {
       setLoading(true);
-      
-      // Load alerts with different statuses
+
       const openData = await getAlerts('OPEN').catch(() => []) || [];
       const acknowledgedData = await getAlerts('ACKNOWLEDGED').catch(() => []) || [];
       const resolvedData = await getAlerts('RESOLVED').catch(() => []) || [];
       const openAlerts = Array.isArray(openData) ? openData : [];
       const acknowledgedAlerts = Array.isArray(acknowledgedData) ? acknowledgedData : [];
       const resolvedAlerts = Array.isArray(resolvedData) ? resolvedData : [];
-      
+
       const allAlerts = [...openAlerts, ...acknowledgedAlerts, ...resolvedAlerts];
       const total = allAlerts.length;
 
-      // Group by machine
       const alertsByMachine = {};
-      allAlerts.forEach(alert => {
+      allAlerts.forEach((alert) => {
         const machineId = alert.machine?.machine_id || alert.machine_id || 'Unknown';
-        if (!alertsByMachine[machineId]) {
-          alertsByMachine[machineId] = { machine: machineId, count: 0 };
-        }
+        if (!alertsByMachine[machineId]) alertsByMachine[machineId] = { machine: machineId, count: 0 };
         alertsByMachine[machineId].count++;
       });
 
-      // Group by severity
       const severityDistribution = {
-        'WARNING': allAlerts.filter(a => a.severity === 'WARNING').length,
-        'ALERT': allAlerts.filter(a => a.severity === 'ALERT').length,
-        'CRITICAL': allAlerts.filter(a => a.severity === 'CRITICAL').length
+        WARNING: allAlerts.filter((a) => a.severity === 'WARNING').length,
+        ALERT: allAlerts.filter((a) => a.severity === 'ALERT').length,
+        CRITICAL: allAlerts.filter((a) => a.severity === 'CRITICAL').length
       };
 
-      // Group by type
       const alertsByType = {};
-      allAlerts.forEach(alert => {
+      allAlerts.forEach((alert) => {
         const type = alert.alert_type || 'Other';
-        if (!alertsByType[type]) {
-          alertsByType[type] = { type, count: 0 };
-        }
+        if (!alertsByType[type]) alertsByType[type] = { type, count: 0 };
         alertsByType[type].count++;
       });
 
-      // Create trend data (mock hourly trend)
       const alertTrend = Array.from({ length: 12 }, (_, i) => {
         const hour = (new Date().getHours() - 11 + i + 24) % 24;
         return {
@@ -100,7 +88,7 @@ const AlertTrends = () => {
         severityDistribution: Object.entries(severityDistribution).map(([name, count]) => ({
           name,
           count,
-          percentage: ((count / total) * 100).toFixed(1)
+          percentage: ((count / (total || 1)) * 100).toFixed(1)
         }))
       });
     } catch (error) {
@@ -110,20 +98,15 @@ const AlertTrends = () => {
     }
   };
 
-  if (loading) {
-    return <div className="alert-trends-container"><p>Loading alert data...</p></div>;
-  }
-
-  const COLORS = ['#ffc107', '#ff6b6b', '#dc3545'];
+  if (loading) return <div className="alert-trends-container"><p>Loading alert data...</p></div>;
 
   return (
     <div className="alert-trends-container">
-      <h3>🚨 Alert & Incident Trends</h3>
+      <h3>Alert and Incident Trends</h3>
 
-      {/* Alert Status KPIs */}
       <div className="alert-kpi-grid">
         <div className="alert-kpi open">
-          <div className="alert-icon">📌</div>
+          <div className="alert-icon">OP</div>
           <div className="alert-info">
             <span className="alert-label">Open Alerts</span>
             <span className="alert-count">{alertData.openAlerts}</span>
@@ -132,7 +115,7 @@ const AlertTrends = () => {
         </div>
 
         <div className="alert-kpi acknowledged">
-          <div className="alert-icon">👁️</div>
+          <div className="alert-icon">AK</div>
           <div className="alert-info">
             <span className="alert-label">Acknowledged</span>
             <span className="alert-count">{alertData.acknowledgedAlerts}</span>
@@ -141,7 +124,7 @@ const AlertTrends = () => {
         </div>
 
         <div className="alert-kpi resolved">
-          <div className="alert-icon">✓</div>
+          <div className="alert-icon">RS</div>
           <div className="alert-info">
             <span className="alert-label">Resolved</span>
             <span className="alert-count">{alertData.resolvedAlerts}</span>
@@ -150,7 +133,7 @@ const AlertTrends = () => {
         </div>
 
         <div className="alert-kpi total">
-          <div className="alert-icon">📊</div>
+          <div className="alert-icon">TT</div>
           <div className="alert-info">
             <span className="alert-label">Total Alerts</span>
             <span className="alert-count">{alertData.totalAlerts}</span>
@@ -159,17 +142,15 @@ const AlertTrends = () => {
         </div>
       </div>
 
-      {/* Charts */}
       <div className="alert-charts">
-        {/* Alert Trend Line Chart */}
         <div className="chart-wrapper full-width">
           <h4>Alert Activity Trend (Last 12 Hours)</h4>
           <ResponsiveContainer width="100%" height={300}>
             <ComposedChart data={alertData.alertTrend}>
               <defs>
                 <linearGradient id="colorAlerts" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ff6b6b" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#ff6b6b" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#ff6b6b" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#ff6b6b" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" />
@@ -183,7 +164,6 @@ const AlertTrends = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* Alerts by Machine */}
         <div className="chart-wrapper">
           <h4>Alerts by Machine</h4>
           <ResponsiveContainer width="100%" height={300}>
@@ -192,12 +172,11 @@ const AlertTrends = () => {
               <XAxis dataKey="machine" tick={{ fontSize: 12 }} />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="count" fill="#667eea" name="Alert Count" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="count" fill="#9b6f3f" name="Alert Count" radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Severity Distribution */}
         <div className="chart-wrapper">
           <h4>Severity Distribution</h4>
           <ResponsiveContainer width="100%" height={300}>
@@ -212,7 +191,6 @@ const AlertTrends = () => {
         </div>
       </div>
 
-      {/* Severity Table */}
       <div className="severity-table">
         <h4>Alert Severity Breakdown</h4>
         <table>
@@ -229,16 +207,11 @@ const AlertTrends = () => {
               const statusClass = item.name === 'CRITICAL' ? 'critical' : item.name === 'ALERT' ? 'alert' : 'warning';
               return (
                 <tr key={idx} className={`severity-${statusClass}`}>
-                  <td className="severity-name">
-                    <span className={`severity-badge ${statusClass}`}>{item.name}</span>
-                  </td>
+                  <td className="severity-name"><span className={`severity-badge ${statusClass}`}>{item.name}</span></td>
                   <td className="severity-count">{item.count}</td>
                   <td className="severity-percentage">{item.percentage}%</td>
                   <td>
-                    <div className="severity-indicator" style={{
-                      background: statusClass === 'critical' ? '#dc3545' : 
-                                statusClass === 'alert' ? '#ff6b6b' : '#ffc107'
-                    }}></div>
+                    <div className="severity-indicator" style={{ background: statusClass === 'critical' ? '#dc3545' : statusClass === 'alert' ? '#ff6b6b' : '#ffc107' }}></div>
                   </td>
                 </tr>
               );
@@ -247,40 +220,31 @@ const AlertTrends = () => {
         </table>
       </div>
 
-      {/* Alert Recommendations */}
       <div className="alert-recommendations">
-        <h4>⚡ Action Items</h4>
+        <h4>Action Items</h4>
         <div className="recommendations-list">
           {alertData.openAlerts > 0 && (
             <div className="recommendation-item urgent">
-              <span className="rec-icon">🔴</span>
-              <span className="rec-text">
-                {alertData.openAlerts} open alert{alertData.openAlerts !== 1 ? 's' : ''} require attention
-              </span>
+              <span className="rec-icon">!</span>
+              <span className="rec-text">{alertData.openAlerts} open alert{alertData.openAlerts !== 1 ? 's' : ''} require attention</span>
             </div>
           )}
-          {alertData.severityDistribution.find(s => s.name === 'CRITICAL')?.count > 0 && (
+          {alertData.severityDistribution.find((s) => s.name === 'CRITICAL')?.count > 0 && (
             <div className="recommendation-item critical">
-              <span className="rec-icon">⚠️</span>
-              <span className="rec-text">
-                Critical alerts detected - Immediate action required
-              </span>
+              <span className="rec-icon">C</span>
+              <span className="rec-text">Critical alerts detected - Immediate action required</span>
             </div>
           )}
           {alertData.acknowledgedAlerts > 0 && (
             <div className="recommendation-item moderate">
-              <span className="rec-icon">👁️</span>
-              <span className="rec-text">
-                {alertData.acknowledgedAlerts} alert{alertData.acknowledgedAlerts !== 1 ? 's' : ''} acknowledged, pending resolution
-              </span>
+              <span className="rec-icon">A</span>
+              <span className="rec-text">{alertData.acknowledgedAlerts} alert{alertData.acknowledgedAlerts !== 1 ? 's' : ''} acknowledged, pending resolution</span>
             </div>
           )}
           {alertData.resolvedAlerts === alertData.totalAlerts && alertData.totalAlerts > 0 && (
             <div className="recommendation-item success">
-              <span className="rec-icon">✓</span>
-              <span className="rec-text">
-                All alerts have been resolved
-              </span>
+              <span className="rec-icon">OK</span>
+              <span className="rec-text">All alerts have been resolved</span>
             </div>
           )}
         </div>
@@ -290,3 +254,6 @@ const AlertTrends = () => {
 };
 
 export default AlertTrends;
+
+
+

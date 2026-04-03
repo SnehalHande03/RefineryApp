@@ -40,27 +40,27 @@ const MaintenanceReport = ({ report }) => {
         <MetricCard
           label="Total Readings"
           value={report.total_readings}
-          icon="📊"
+          icon="TR"
         />
         <MetricCard
           label="Failure Predictions"
           value={report.failure_predictions}
-          icon="⚠️"
+          icon="FR"
         />
         <MetricCard
           label="Failure Rate"
           value={Math.round(report.failure_rate * 10) / 10 + '%'}
-          icon="📈"
+          icon="RT"
         />
         <MetricCard
           label="Alerts Triggered"
           value={report.alerts_triggered}
-          icon="🚨"
+          icon="AL"
         />
         <MetricCard
           label="Critical Alerts"
           value={report.critical_alerts}
-          icon="🔴"
+          icon="CR"
         />
       </div>
 
@@ -70,7 +70,7 @@ const MaintenanceReport = ({ report }) => {
           <SensorAverage
             sensor="Temperature"
             value={report.avg_temperature}
-            unit="°C"
+            unit=" C"
             range={[10, 150]}
           />
           <SensorAverage
@@ -148,12 +148,14 @@ const SensorAverage = ({ sensor, value, unit, range }) => {
 
 const getPriorityMessage = (priority) => {
   const messages = {
-    LOW: '✓ Machine operating normally. Continue routine monitoring.',
-    MEDIUM: '⚠️ Some issues detected. Plan maintenance within the week.',
-    HIGH: '🚨 Significant issues detected. Plan maintenance within 48 hours.',
-    CRITICAL: '🚨 URGENT: Immediate maintenance required. High failure risk.',
+    LOW: 'Machine operating normally. Continue routine monitoring.',
+    MEDIUM: 'Some issues detected. Plan maintenance within the week.',
+    HIGH: 'Significant issues detected. Plan maintenance within 48 hours.',
+    CRITICAL: 'URGENT: Immediate maintenance required. High failure risk.',
   };
   return messages[priority] || '';
 };
 
 export default MaintenanceReport;
+
+
