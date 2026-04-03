@@ -1,0 +1,198 @@
+.report-container {
+  background-color: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.report-header {
+  margin-bottom: 24px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 16px;
+}
+
+.report-header h2 {
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.date-range {
+  color: #666;
+  font-size: 14px;
+}
+
+.priority-section {
+  background-color: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid;
+  margin-bottom: 24px;
+}
+
+.priority-section h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.priority-badge {
+  display: inline-block;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.priority-text {
+  margin: 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-card {
+  background-color: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.metric-icon {
+  font-size: 32px;
+}
+
+.metric-content {
+  flex: 1;
+}
+
+.metric-label {
+  color: #666;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  color: #333;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.sensor-averages {
+  margin-bottom: 24px;
+  background-color: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.sensor-averages h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.averages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.sensor-average {
+  background-color: white;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.sensor-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.sensor-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 13px;
+}
+
+.sensor-value {
+  color: #0070f3;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.sensor-range-bar {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 6px;
+  background-color: #e0e0e0;
+}
+
+.range-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, #4caf50, #ff9800, #f44336);
+}
+
+.range-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background-color: rgba(0, 112, 243, 0.6);
+  transition: width 0.3s ease;
+}
+
+.range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #999;
+}
+
+.recommendations {
+  background-color: #e8f5e9;
+  border-left: 4px solid #4caf50;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.recommendations h3 {
+  margin-top: 0;
+  color: #2e7d32;
+}
+
+.recommendations-text {
+  margin: 0;
+}
+
+.recommendations-text p {
+  margin: 8px 0;
+  color: #1b5e20;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.recommendations-text p:first-child {
+  margin-top: 0;
+}
+
+.recommendations-text p:last-child {
+  margin-bottom: 0;
+}
