@@ -14,12 +14,6 @@ A complete machine learning monitoring system for refinery equipment (pumps, com
 
 ## Quick Start
 
-### Prerequisites
-- Python 3.9+
-- Node.js 16+
-- pip
-- npm
-
 ### Backend Setup
 
 1. Create virtual environment:
@@ -178,20 +172,7 @@ Auto-aggregates last 7 days:
 - Alert counts
 - Smart maintenance priority (LOW/MEDIUM/HIGH/CRITICAL)
 - Actionable recommendations
-
----
-
-## Why Random Forest Over Linear Regression?
-
-| Aspect | Linear Regression | Decision Tree | **Random Forest** |
-|--------|------------------|----------------|------------------|
-| Classification | ❌ Regression-based | ✓ Classification | ✓ Classification |
-| Non-linear patterns | ❌ No | ✓ Yes | ✓ Yes |
-| Overfitting | ✓ Stable | ❌ High | ✓ Low (ensemble) |
-| Interpretability | ✓ High | ✓ High | ✓ Feature importance |
-| Missing data | ❌ Poor | ✓ Good | ✓ Good |
-| Accuracy on this data | ~0.70 | ~0.90 | **~0.94** ← Best |
-
+ 
 ---
 
 ## Project Structure
