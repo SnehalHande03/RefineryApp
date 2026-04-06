@@ -16,11 +16,14 @@ function App() {
     
     if (isAuthenticated && userData) {
       setUser(JSON.parse(userData));
-      setCurrentPage('dashboard');
     }
   }, []);
 
   const handleLoginClick = () => {
+    if (user) {
+      setCurrentPage('dashboard');
+      return;
+    }
     setCurrentPage('login');
   };
 

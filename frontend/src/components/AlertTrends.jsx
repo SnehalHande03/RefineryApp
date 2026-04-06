@@ -109,8 +109,10 @@ const AlertTrends = () => {
           <div className="alert-icon">OP</div>
           <div className="alert-info">
             <span className="alert-label">Open Alerts</span>
-            <span className="alert-count">{alertData.openAlerts}</span>
-            <span className="alert-percentage">{((alertData.openAlerts / (alertData.totalAlerts || 1)) * 100).toFixed(1)}%</span>
+            <div className="alert-metric-row">
+              <span className="alert-count">{alertData.openAlerts}</span>
+              <span className="alert-percentage">{((alertData.openAlerts / (alertData.totalAlerts || 1)) * 100).toFixed(1)}%</span>
+            </div>
           </div>
         </div>
 
@@ -118,8 +120,10 @@ const AlertTrends = () => {
           <div className="alert-icon">AK</div>
           <div className="alert-info">
             <span className="alert-label">Acknowledged</span>
-            <span className="alert-count">{alertData.acknowledgedAlerts}</span>
-            <span className="alert-percentage">{((alertData.acknowledgedAlerts / (alertData.totalAlerts || 1)) * 100).toFixed(1)}%</span>
+            <div className="alert-metric-row">
+              <span className="alert-count">{alertData.acknowledgedAlerts}</span>
+              <span className="alert-percentage">{((alertData.acknowledgedAlerts / (alertData.totalAlerts || 1)) * 100).toFixed(1)}%</span>
+            </div>
           </div>
         </div>
 
@@ -127,8 +131,10 @@ const AlertTrends = () => {
           <div className="alert-icon">RS</div>
           <div className="alert-info">
             <span className="alert-label">Resolved</span>
-            <span className="alert-count">{alertData.resolvedAlerts}</span>
-            <span className="alert-percentage">{((alertData.resolvedAlerts / (alertData.totalAlerts || 1)) * 100).toFixed(1)}%</span>
+            <div className="alert-metric-row">
+              <span className="alert-count">{alertData.resolvedAlerts}</span>
+              <span className="alert-percentage">{((alertData.resolvedAlerts / (alertData.totalAlerts || 1)) * 100).toFixed(1)}%</span>
+            </div>
           </div>
         </div>
 
@@ -136,8 +142,10 @@ const AlertTrends = () => {
           <div className="alert-icon">TT</div>
           <div className="alert-info">
             <span className="alert-label">Total Alerts</span>
-            <span className="alert-count">{alertData.totalAlerts}</span>
-            <span className="alert-percentage">All Time</span>
+            <div className="alert-metric-row">
+              <span className="alert-count">{alertData.totalAlerts}</span>
+              <span className="alert-percentage">All Time</span>
+            </div>
           </div>
         </div>
       </div>

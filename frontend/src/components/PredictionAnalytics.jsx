@@ -122,8 +122,10 @@ const PredictionAnalytics = ({ machineId }) => {
           <div className="kpi-icon">OK</div>
           <div className="kpi-content">
             <span className="kpi-label">Normal Status</span>
-            <span className="kpi-value">{predictionStats.normalCount}</span>
-            <span className="kpi-percentage">{normalPercentage}%</span>
+            <div className="kpi-metric-row">
+              <span className="kpi-value">{predictionStats.normalCount}</span>
+              <span className="kpi-percentage">{normalPercentage}%</span>
+            </div>
           </div>
         </div>
 
@@ -131,8 +133,10 @@ const PredictionAnalytics = ({ machineId }) => {
           <div className="kpi-icon">AL</div>
           <div className="kpi-content">
             <span className="kpi-label">Failure Risk</span>
-            <span className="kpi-value">{predictionStats.failureCount}</span>
-            <span className="kpi-percentage">{failurePercentage}%</span>
+            <div className="kpi-metric-row">
+              <span className="kpi-value">{predictionStats.failureCount}</span>
+              <span className="kpi-percentage">{failurePercentage}%</span>
+            </div>
           </div>
         </div>
 
@@ -140,7 +144,9 @@ const PredictionAnalytics = ({ machineId }) => {
           <div className="kpi-icon">CF</div>
           <div className="kpi-content">
             <span className="kpi-label">Avg Confidence</span>
-            <span className="kpi-value">{(predictionStats.avgConfidence * 100).toFixed(1)}%</span>
+            <div className="kpi-metric-row">
+              <span className="kpi-value">{(predictionStats.avgConfidence * 100).toFixed(1)}%</span>
+            </div>
             <span className="kpi-percentage">Model Accuracy</span>
           </div>
         </div>
@@ -149,7 +155,9 @@ const PredictionAnalytics = ({ machineId }) => {
           <div className="kpi-icon">TP</div>
           <div className="kpi-content">
             <span className="kpi-label">Total Predictions</span>
-            <span className="kpi-value">{predictionStats.totalPredictions}</span>
+            <div className="kpi-metric-row">
+              <span className="kpi-value">{predictionStats.totalPredictions}</span>
+            </div>
             <span className="kpi-percentage">This Session</span>
           </div>
         </div>
